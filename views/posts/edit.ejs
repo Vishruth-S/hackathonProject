@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit</title>
+</head>
+
+<body>
+    <h1>Editing </h1>
+    <form action="/posts/<%=post._id%>?_method=PUT" method="POST">
+        <div>
+            <input type="text" id="title" name="post[title]" placeholder="Title" value="<%= post.title%>">
+        </div>
+        <div>
+            <input type="text" id="description" name="post[description]" placeholder="Content"
+                value="<%= post.description%>">
+        </div>
+        <div>
+            <button>Update Post</button>
+        </div>
+    </form>
+    <a href="/posts/<%=post._id%>">Go back</a>
+</body>
+
+</html>
