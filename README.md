@@ -1,4 +1,2 @@
-# project_candy
- Web_dev_bootcamp 
-  Section 9 
-   Mueseum of Candy
+# Hackathon Project
+:construction: Hmm, looks like nothing much to see here. Maybe come back later :construction:
