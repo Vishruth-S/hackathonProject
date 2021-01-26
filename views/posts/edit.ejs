@@ -1,27 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit</title>
-</head>
-
-<body>
-    <h1>Editing </h1>
-    <form action="/posts/<%=post._id%>?_method=PUT" method="POST">
-        <div>
-            <input type="text" id="title" name="post[title]" placeholder="Title" value="<%= post.title%>">
+<% layout('layouts/boilerplate') %>
+    <div class="row">
+        <h1 class="text-center">Edit Post</h1>
+        <div class="col-6 offset-3">
+            <form action="/posts/<%=post._id%>?_method=PUT" method="POST" novalidate class="validated-form">
+                <div class="mb-3">
+                    <label class="form-label" for="title">Title</label>
+                    <input class="form-control" type="text" id="title" name="post[title]" value="<%=post.title%>"
+                        required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="image">Image URL</label>
+                    <input class="form-control" type="text" id="image" name="post[image]" value="<%=post.image%>"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="description">description </label>
+                    <textarea class="form-control" type="text" id="description" name="post[description]"
+                        required><%=post.description%></textarea>
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-success">Update Post</button>
+                </div>
+            </form>
+            <a href="/posts/<%=post._id%>"><button class="btn btn-primary">Go back</button></a>
         </div>
-        <div>
-            <input type="text" id="description" name="post[description]" placeholder="Content"
-                value="<%= post.description%>">
-        </div>
-        <div>
-            <button>Update Post</button>
-        </div>
-    </form>
-    <a href="/posts/<%=post._id%>">Go back</a>
-</body>
-
-</html>
+    </div>

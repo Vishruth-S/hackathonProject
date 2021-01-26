@@ -1,24 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+<% layout('layouts/boilerplate') %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+    <body>
+        <div class="row">
+            <h1 class="text-center">New Post</h1>
+            <div class="col-6 offset-3">
+                <form action="/posts" method="POST" novalidate class="validated-form">
+                    <div class="mb-3">
+                        <label class="form-label" for="title">Title</label>
+                        <input class="form-control" type="text" id="title" name="post[title]" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
 
-<body>
-    <form action="/posts" method="POST">
-        <div>
-            <input type="text" id="title" name="post[title]" placeholder="Title">
+                    <div class="mb-3">
+                        <label class="form-label" for="image">Image URL</label>
+                        <input class="form-control" type="text" id="image" name="post[image]" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="description">description </label>
+                        <textarea class="form-control" type="text" id="description" name="post[description]"
+                            required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-success">Add Post</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div>
-            <input type="text" id="description" name="post[description]" placeholder="Content">
-        </div>
-        <div>
-            <button>Add Post</button>
-        </div>
-    </form>
-</body>
-
-</html>
