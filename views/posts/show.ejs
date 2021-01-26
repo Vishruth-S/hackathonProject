@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate') %>
     <div class="row">
-        <div class="col-6 offset-3">
+        <div class="col-6">
             <div class="card mb-3">
                 <img src="<%= post.image%>" class="card-img-top" alt="...">
                 <div class="card-body">
@@ -21,5 +21,30 @@
                     2 days ago
                 </div>
             </div>
+        </div>
+        <div class="col-6">
+            <h3>Leave a comment</h3>
+            <form action="/posts/<%=post._id%>/comments" class="mb-3 validated-form" method="POST" novalidate>
+                <div class="mb-3">
+                    <label class="form-label" for="body">Comment</label>
+                    <textarea class="form-control" name="comment[body]" id="body" rows="3" cols="30"
+                        required></textarea>
+                    <div class="valid-feedback">Looks good</div>
+                </div>
+                <button class="btn btn-success">Submit</button>
+            </form>
+            <% for(let comment of post.comments) { %>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">User</h5>
+                        <p class="Card-text">
+                            <%= comment.body %>
+                        </p>
+                        <form action="/posts/<%=post._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                    <% } %>
+                </div>
         </div>
     </div>

@@ -6,6 +6,7 @@ const ejsMate = require('ejs-mate')
 const methodOverride = require('method-override')
 
 const Post = require('./models/Post')
+const Comment = require('./models/Comment')
 
 mongoose.connect("mongodb://localhost:27017/temp", {
     useNewUrlParser: true,
@@ -48,7 +49,7 @@ app.post('/posts', async (req, res) => {
 })
 
 app.get('/posts/:id', async (req, res) => {
-    const post = await Post.findById(req.params.id)
+    const post = await Post.findById(req.params.id).populate('comments')
     res.render('posts/show', { post })
 })
 
@@ -67,6 +68,22 @@ app.delete('/posts/:id', async (req, res) => {
     const { id } = req.params
     await Post.findByIdAndDelete(id)
     res.redirect('/posts')
+})
+
+app.post('/posts/:id/comments', async (req, res) => {
+    const post = await Post.findById(req.params.id)
+    const comment = new Comment(req.body.comment)
+    post.comments.push(comment)
+    await comment.save()
+    await post.save()
+    res.redirect(`/posts/${post._id}`)
+})
+
+app.delete('/posts/:id/comments/:commentId', async (req, res) => {
+    const { id, commentId } = req.params
+    await Post.findByIdAndUpdate(id, { $pull: { comments: commentId } })
+    await Comment.findByIdAndDelete(commentId)
+    res.redirect(`/posts/${id}`)
 })
 
 // app.get('/makepost', async (req, res) => {
