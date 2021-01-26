@@ -1,26 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts</title>
-</head>
-
-<body>
-    <div>
-        <a href="/posts/new"><button>Create new post</button></a>
-    </div>
+<% layout('layouts/boilerplate') %>
     <h1>All posts</h1>
     <ul>
         <% for (let post of posts){%>
-            <li>
-                <a href="/posts/<%= post._id %>">
-                    <%= post.title%>
-                </a>
-            </li>
+            <div class="card" mb-3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <img class="img-fluid" src="<%= post.image%>" alt="">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h5 class="card-title">
+                                    <%= post.title%>
+                                </h5>
+                                <p class="card-text">
+                                    <%= post.description %>
+                                </p>
+                                <a class="btn btn-primary" href="/posts/<%=post.id %>">View Post</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <% } %>
     </ul>
-</body>
-
-</html>
