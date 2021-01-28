@@ -1,5 +1,4 @@
 const express = require('express')
-const app = express()
 const path = require('path')
 const mongoose = require('mongoose')
 const ejsMate = require('ejs-mate')
@@ -8,11 +7,12 @@ const flash = require('connect-flash')
 const methodOverride = require('method-override')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
-const User = require('./models/user')
+const User = require('./models/User')
 
 const userRoutes = require('./routes/users')
 const postRoutes = require('./routes/posts')
 const commentRoutes = require('./routes/comments')
+
 
 mongoose.connect("mongodb://localhost:27017/temp", {
     useNewUrlParser: true,
@@ -28,6 +28,7 @@ db.once("open", () => {
 })
 
 const PORT = process.env.PORT || 5000
+const app = express()
 
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
@@ -63,14 +64,16 @@ app.use((req, res, next) => {
     next()
 })
 
+app.use('/', userRoutes)
+app.use('/posts/', postRoutes)
+app.use('/posts/:id/comments/', commentRoutes)
+
 app.get('/', (req, res) => {
     res.render('Home')
 })
 
 
-app.use('/', userRoutes)
-app.use('/posts/', postRoutes)
-app.use('/posts/:id/comments/', commentRoutes)
+
 
 // app.get('/makepost', async (req, res) => {
 //     const newPost = new Post({ title: "Test Post", description: "Test content ok" })
