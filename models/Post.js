@@ -1,11 +1,17 @@
 const mongoose = require('mongoose')
-const Comment = require('./comment')
 const Schema = mongoose.Schema
+const Comment = require('./Comment')
+const User = require('./User')
+
 
 const postSchema = new Schema({
     title: String,
     image: String,
     description: String,
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     comments: [
         {
             type: Schema.Types.ObjectId,

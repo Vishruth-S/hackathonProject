@@ -10,41 +10,52 @@
                     <p class="card-text">
                         <%= post.description%>
                     </p>
+                    <i>Submitted by <%= post.author.username %></i>
                 </div>
-                <div class="card-body">
-                    <a href="/posts/<%=post._id%>/edit" class="card-link btn btn-warning">Edit</a>
-                    <form class="d-inline" action="/posts/<%=post._id%>?_method=DELETE" method="POST"><button
-                            class="btn btn-danger">Delete</button>
-                    </form>
-                </div>
-                <div class="card-footer text-muted">
-                    2 days ago
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <h3>Leave a comment</h3>
-            <form action="/posts/<%=post._id%>/comments" class="mb-3 validated-form" method="POST" novalidate>
-                <div class="mb-3">
-                    <label class="form-label" for="body">Comment</label>
-                    <textarea class="form-control" name="comment[body]" id="body" rows="3" cols="30"
-                        required></textarea>
-                    <div class="valid-feedback">Looks good</div>
-                </div>
-                <button class="btn btn-success">Submit</button>
-            </form>
-            <% for(let comment of post.comments) { %>
-                <div class="card mb-3">
+                <% if(currentUser && post.author.equals(currentUser._id)) { %>
                     <div class="card-body">
-                        <h5 class="card-title">User</h5>
-                        <p class="Card-text">
-                            <%= comment.body %>
-                        </p>
-                        <form action="/posts/<%=post._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
-                            <button class="btn btn-sm btn-danger">Delete</button>
+                        <a href="/posts/<%=post._id%>/edit" class="card-link btn btn-warning">Edit</a>
+                        <form class="d-inline" action="/posts/<%=post._id%>?_method=DELETE" method="POST"><button
+                                class="btn btn-danger">Delete</button>
                         </form>
                     </div>
                     <% } %>
-                </div>
+                        <div class="card-footer text-muted">
+                            2 days ago
+                        </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <% if(currentUser) { %>
+                <h3>Leave a comment</h3>
+                <form action="/posts/<%=post._id%>/comments" class="mb-3 validated-form" method="POST" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label" for="body">Comment</label>
+                        <textarea class="form-control" name="comment[body]" id="body" rows="3" cols="30"
+                            required></textarea>
+                        <div class="valid-feedback">Looks good</div>
+                    </div>
+                    <button class="btn btn-success">Submit</button>
+                </form>
+                <% } else { %>
+                    <h4>You must be logged in to add a comment</h4>
+                    <% } %>
+                        <% for(let comment of post.comments) { %>
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">By <%= comment.author.username %>
+                                    </h6>
+                                    <p class="Card-text">
+                                        <%= comment.body %>
+                                    </p>
+                                    <% if(currentUser && comment.author.equals(currentUser._id)) { %>
+                                        <form action="/posts/<%=post._id%>/comments/<%=comment._id%>?_method=DELETE"
+                                            method="POST">
+                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                        <% } %>
+                                </div>
+                                <% } %>
+                            </div>
         </div>
     </div>

@@ -1,17 +1,24 @@
 const express = require('express')
-const app = express()
 const path = require('path')
 const mongoose = require('mongoose')
 const ejsMate = require('ejs-mate')
+const session = require('express-session')
+const flash = require('connect-flash')
 const methodOverride = require('method-override')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const User = require('./models/User')
 
-const Post = require('./models/Post')
-const Comment = require('./models/Comment')
+const userRoutes = require('./routes/users')
+const postRoutes = require('./routes/posts')
+const commentRoutes = require('./routes/comments')
+
 
 mongoose.connect("mongodb://localhost:27017/temp", {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false,
 })
 
 const db = mongoose.connection
@@ -21,70 +28,52 @@ db.once("open", () => {
 })
 
 const PORT = process.env.PORT || 5000
+const app = express()
 
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
+app.use(express.static(path.join(__dirname, 'public')))
+const sessionConfig = {
+    secret: 'thisisasecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+}
+app.use(session(sessionConfig))
+app.use(flash())
+
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate()))
+
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
 
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success')
+    res.locals.error = req.flash('error')
+    res.locals.currentUser = req.user
+    next()
+})
+
+app.use('/', userRoutes)
+app.use('/posts/', postRoutes)
+app.use('/posts/:id/comments/', commentRoutes)
 
 app.get('/', (req, res) => {
     res.render('Home')
 })
 
-app.get('/posts', async (req, res) => {
-    const posts = await Post.find({})
-    res.render('posts/index', { posts })
-})
 
-app.get('/posts/new', (req, res) => {
-    res.render("posts/new")
-})
 
-app.post('/posts', async (req, res) => {
-    const post = new Post(req.body.post)
-    await post.save()
-    res.redirect(`/posts/${post._id}`)
-})
-
-app.get('/posts/:id', async (req, res) => {
-    const post = await Post.findById(req.params.id).populate('comments')
-    res.render('posts/show', { post })
-})
-
-app.get('/posts/:id/edit', async (req, res) => {
-    const post = await Post.findById(req.params.id)
-    res.render('posts/edit', { post })
-})
-
-app.put('/posts/:id', async (req, res) => {
-    const { id } = req.params
-    const post = await Post.findByIdAndUpdate(id, { ...req.body.post })
-    res.redirect(`/posts/${post._id}`)
-})
-
-app.delete('/posts/:id', async (req, res) => {
-    const { id } = req.params
-    await Post.findByIdAndDelete(id)
-    res.redirect('/posts')
-})
-
-app.post('/posts/:id/comments', async (req, res) => {
-    const post = await Post.findById(req.params.id)
-    const comment = new Comment(req.body.comment)
-    post.comments.push(comment)
-    await comment.save()
-    await post.save()
-    res.redirect(`/posts/${post._id}`)
-})
-
-app.delete('/posts/:id/comments/:commentId', async (req, res) => {
-    const { id, commentId } = req.params
-    await Post.findByIdAndUpdate(id, { $pull: { comments: commentId } })
-    await Comment.findByIdAndDelete(commentId)
-    res.redirect(`/posts/${id}`)
-})
 
 // app.get('/makepost', async (req, res) => {
 //     const newPost = new Post({ title: "Test Post", description: "Test content ok" })
